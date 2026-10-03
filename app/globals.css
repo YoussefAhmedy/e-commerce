@@ -1,121 +1,144 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+/* ─────────────────────────────────────────────────────────────
+   Printique design tokens (Tailwind 4 CSS-first theme)
+   Palette: warm paper, deep ink, terracotta clay — gallery-grade calm.
+   ───────────────────────────────────────────────────────────── */
+@theme {
+  --color-paper: #faf8f5;
+  --color-cream: #f4efe8;
+  --color-sand: #e9e1d6;
+  --color-ink: #201a17;
+  --color-ink-soft: #6f655c;
+  --color-ink-faint: #a79a8e;
+  --color-line: #e7e0d7;
+
+  --color-clay-50: #fbf1ec;
+  --color-clay-100: #f6e0d5;
+  --color-clay-200: #ecc2ae;
+  --color-clay-300: #df9d80;
+  --color-clay-400: #ce7553;
+  --color-clay-500: #c05f3d;
+  --color-clay-600: #b0502f;
+  --color-clay-700: #934026;
+  --color-clay-800: #76351f;
+  --color-clay-900: #612d1c;
+
+  --color-forest-500: #4d6a5b;
+  --color-forest-600: #40594c;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+
+  --radius-xl: 0.875rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.75rem;
+
+  --shadow-soft: 0 1px 2px rgb(32 26 23 / 0.04), 0 8px 24px -12px rgb(32 26 23 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(32 26 23 / 0.05), 0 16px 40px -16px rgb(32 26 23 / 0.25);
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
   html {
-    font-family: 'Inter', system-ui, sans-serif;
+    @apply bg-paper text-ink font-sans antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   body {
-    @apply bg-gradient-to-br from-rose-50/30 via-white to-pink-50/20;
-    @apply text-gray-800;
-    @apply antialiased;
     min-height: 100vh;
-    background-attachment: fixed;
+  }
+
+  /* Visible, consistent keyboard focus everywhere */
+  :focus-visible {
+    outline: 2px solid var(--color-clay-600);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--color-clay-100);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Buttons */
+  .btn,
+  .btn-primary,
+  .btn-accent,
+  .btn-secondary,
+  .btn-ghost,
+  .btn-danger {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply bg-ink text-paper shadow-soft hover:bg-clay-700 active:scale-[0.98];
+  }
+  .btn-accent {
+    @apply bg-clay-600 text-white shadow-soft hover:bg-clay-700 active:scale-[0.98];
+  }
+  .btn-secondary {
+    @apply border border-line bg-white text-ink hover:border-ink-faint hover:bg-cream;
+  }
+  .btn-ghost {
+    @apply text-ink-soft hover:bg-cream hover:text-ink;
+  }
+  .btn-danger {
+    @apply bg-red-600 text-white hover:bg-red-700;
+  }
+
+  /* Form fields */
+  .field {
+    @apply w-full rounded-xl border border-line bg-white px-4 py-2.5 text-sm text-ink placeholder:text-ink-faint transition-colors focus:border-clay-400 focus:outline-none focus:ring-2 focus:ring-clay-100;
+  }
+  .field-error {
+    @apply border-red-300 focus:border-red-400 focus:ring-red-100;
+  }
+  .input {
+    @apply w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-ink shadow-sm outline-none transition placeholder:text-ink-faint focus:border-clay-400 focus:ring-2 focus:ring-clay-500/20 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .label {
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-ink-soft;
+  }
+
+  /* Surfaces */
+  .card {
+    @apply rounded-2xl border border-line bg-white shadow-soft;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full border border-line bg-white px-3 py-1 text-xs font-medium text-ink-soft;
   }
 }
 
 @layer utilities {
-  .line-clamp-1 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
+  .scrollbar-none {
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
-
-  .line-clamp-2 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-  }
-
-  .line-clamp-3 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-  }
-
-  .glass-effect {
-    @apply backdrop-blur-sm bg-white/80 border border-white/20;
-  }
-
-  .soft-shadow {
-    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08);
-  }
-
-  .hover-lift {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .hover-lift:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px -2px rgba(0, 0, 0, 0.12);
-  }
-
-  .btn-primary {
-    @apply bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600;
-    @apply text-white font-medium px-6 py-3 rounded-2xl;
-    @apply transition-all duration-200;
-    @apply shadow-lg hover:shadow-xl;
-    @apply border-0;
-  }
-
-  .btn-secondary {
-    @apply bg-white/80 hover:bg-white;
-    @apply text-gray-700 font-medium px-6 py-3 rounded-2xl;
-    @apply transition-all duration-200;
-    @apply border border-gray-200/50 hover:border-gray-300;
-    @apply shadow-sm hover:shadow-md;
-  }
-
-  .input-field {
-    @apply bg-white/50 border border-gray-200/50 rounded-2xl px-4 py-3;
-    @apply focus:outline-none focus:ring-2 focus:ring-rose-200 focus:border-rose-300;
-    @apply transition-all duration-200;
-    @apply placeholder-gray-400;
+  .text-balance {
+    text-wrap: balance;
   }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-/* Smooth animations */
-* {
-  scroll-behavior: smooth;
-}
-
-/* Loading animation */
+/* Subtle shimmer for skeletons */
 @keyframes shimmer {
-  0% {
-    background-position: -200px 0;
-  }
-  100% {
-    background-position: calc(200px + 100%) 0;
-  }
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
 }
-
-.shimmer {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200px 100%;
-  animation: shimmer 1.5s infinite;
+.skeleton {
+  background: linear-gradient(90deg, var(--color-cream) 25%, var(--color-sand) 40%, var(--color-cream) 55%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
 }

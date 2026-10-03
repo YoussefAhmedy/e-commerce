@@ -1,0 +1,16 @@
+.git
+.github
+node_modules
+.next
+.data
+tests
+docs
+*.md
+Dockerfile
+docker-compose.yml
+.env
+.env.*
+!.env.example
+coverage
+.vscode
+.idea

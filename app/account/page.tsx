@@ -1,129 +1,61 @@
-'use client'
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { MailCheck, Package } from 'lucide-react'
+import { getSessionUser } from '@/lib/security/session'
+import { listOrdersByUser } from '@/lib/db/repositories/orders'
+import { OrderCard } from './order-card'
+import { ProfileForm } from './profile-form'
 
-import { useStore } from '@/contexts/StoreContext'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+export const metadata: Metadata = { title: 'Account overview', robots: { index: false } }
+export const dynamic = 'force-dynamic'
 
-export default function AccountPage() {
-  const { state, dispatch } = useStore()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (!state.isAuthenticated) {
-      router.push('/signin')
-    }
-  }, [state.isAuthenticated, router])
-
-  const handleLogout = () => {
-    dispatch({ type: 'LOGOUT' })
-    router.push('/')
-  }
-
-  if (!state.isAuthenticated || !state.user) {
-    return null
-  }
+export default async function AccountOverviewPage() {
+  const user = (await getSessionUser())!
+  const orders = listOrdersByUser(user.id, 3)
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-lg shadow-sm border">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h1 className="text-2xl font-bold text-gray-900">My Account</h1>
-          </div>
-          
-          <div className="p-6 space-y-6">
-            {/* User Info */}
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Account Information</h2>
-              <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Name:</span>
-                  <span className="font-medium">{state.user.name}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Email:</span>
-                  <span className="font-medium">{state.user.email}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Member since:</span>
-                  <span className="font-medium">Today</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Order History */}
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Order History</h2>
-              <div className="bg-gray-50 rounded-lg p-8 text-center">
-                <svg className="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No orders yet</h3>
-                <p className="text-gray-600 mb-4">Start shopping to see your order history here.</p>
-                <button
-                  onClick={() => router.push('/posters')}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors"
-                >
-                  Browse Products
-                </button>
-              </div>
-            </div>
-
-            {/* Account Actions */}
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Account Actions</h2>
-              <div className="space-y-3">
-                <button
-                  onClick={() => router.push('/cart')}
-                  className="w-full text-left bg-gray-50 hover:bg-gray-100 rounded-lg p-4 transition-colors"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-medium text-gray-900">View Cart</h3>
-                      <p className="text-sm text-gray-600">
-                        {state.cart.length} {state.cart.length === 1 ? 'item' : 'items'} in cart
-                      </p>
-                    </div>
-                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => router.push('/custom')}
-                  className="w-full text-left bg-gray-50 hover:bg-gray-100 rounded-lg p-4 transition-colors"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-medium text-gray-900">Create Custom Poster</h3>
-                      <p className="text-sm text-gray-600">Upload your own images and create personalized art</p>
-                    </div>
-                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </button>
-
-                <button
-                  onClick={handleLogout}
-                  className="w-full text-left bg-red-50 hover:bg-red-100 text-red-700 rounded-lg p-4 transition-colors"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-medium">Sign Out</h3>
-                      <p className="text-sm text-red-600">Sign out of your account</p>
-                    </div>
-                    <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                  </div>
-                </button>
-              </div>
-            </div>
+    <div className="space-y-8">
+      {!user.emailVerifiedAt && (
+        <div className="flex items-start gap-3 rounded-2xl bg-amber-500/10 px-5 py-4">
+          <MailCheck className="mt-0.5 shrink-0 text-amber-700" size={18} aria-hidden />
+          <div>
+            <p className="text-sm font-semibold text-amber-800">Verify your email address</p>
+            <p className="mt-0.5 text-sm text-amber-700">
+              We sent a verification link when you registered — confirming protects your account and order updates.
+            </p>
           </div>
         </div>
-      </div>
+      )}
+
+      <section aria-labelledby="recent-orders">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 id="recent-orders" className="font-display text-xl font-semibold">Recent orders</h2>
+          <Link href={'/account/orders' as never} className="text-sm font-medium text-clay-700 hover:underline">
+            View all
+          </Link>
+        </div>
+        {orders.length === 0 ? (
+          <div className="flex items-center gap-4 rounded-2xl border border-dashed border-line bg-white/60 p-6">
+            <Package className="shrink-0 text-ink-faint" size={24} aria-hidden />
+            <div className="flex-1">
+              <p className="text-sm font-semibold">No orders yet</p>
+              <p className="text-sm text-ink-soft">Your pieces and their tracking will appear here.</p>
+            </div>
+            <Link href={'/catalog' as never} className="btn-secondary text-sm">Browse prints</Link>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {orders.map((o) => (
+              <OrderCard key={o.id} order={o} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section aria-labelledby="profile">
+        <h2 id="profile" className="mb-4 font-display text-xl font-semibold">Profile</h2>
+        <ProfileForm initialName={user.name} email={user.email} />
+      </section>
     </div>
   )
 }

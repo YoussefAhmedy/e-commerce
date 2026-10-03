@@ -1,27 +1,50 @@
 {
-  "name": "e-commerce-app",
-  "version": "0.1.0",
-  "private": true,
+  "name": "printique",
+  "version": "1.0.0",
+  "private": false,
+  "description": "Printique — a production-grade full-stack e-commerce platform for art prints, posters and custom framing.",
+  "license": "MIT",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -H 0.0.0.0",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "next start -H 0.0.0.0",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:migrate": "tsx scripts/db-migrate.ts",
+    "db:seed": "tsx scripts/db-seed.ts",
+    "db:reset": "tsx scripts/db-reset.ts",
+    "setup": "tsx scripts/setup.ts",
+    "validate": "npm run typecheck && npm run lint && npm run test && npm run build"
+  },
+  "engines": {
+    "node": ">=22.5.0"
   },
   "dependencies": {
-    "next": "14.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "@types/node": "^20.0.0",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "typescript": "^5.0.0",
-    "tailwindcss": "^3.3.0",
-    "autoprefixer": "^10.4.0",
-    "postcss": "^8.4.0"
+    "bcryptjs": "^3.0.3",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.50.0",
+    "next": "^16.3.8",
+    "nodemailer": "^10.0.13",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "sharp": "^0.35.5",
+    "tailwind-merge": "^3.3.1",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
-    "eslint": "^8.0.0",
-    "eslint-config-next": "14.0.0"
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^24.3.0",
+    "@types/nodemailer": "^8.0.2",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "eslint": "^9.37.0",
+    "eslint-config-next": "^16.3.8",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.3"
   }
 }

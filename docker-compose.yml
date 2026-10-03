@@ -1,0 +1,48 @@
+# Printique — local/dev convenience. The app is a single container; SQLite lives
+# on the named volume. No external services are required.
+#
+#   docker compose up --build        → http://localhost:3000
+#
+# APP_SECRET must be set in production (compose falls back to a dev-only value).
+name: printique
+
+services:
+  app:
+    build: .
+    image: printique:local
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      DATA_DIR: /data
+      SITE_URL: ${SITE_URL:-http://localhost:3000}
+      APP_SECRET: ${APP_SECRET:-compose-dev-secret-change-me-0000}
+      PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-mock}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER:-console}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      EMAIL_FROM: ${EMAIL_FROM:-Printique <hello@printique.example>}
+      AI_PROVIDER: ${AI_PROVIDER:-none}
+      AI_BASE_URL: ${AI_BASE_URL:-https://api.openai.com/v1}
+      AI_API_KEY: ${AI_API_KEY:-}
+      AI_MODEL: ${AI_MODEL:-gpt-4o-mini}
+      AI_RATE_LIMIT: ${AI_RATE_LIMIT:-30}
+      TAX_RATE: ${TAX_RATE:-0.08}
+      SHIPPING_FLAT_CENTS: ${SHIPPING_FLAT_CENTS:-999}
+      FREE_SHIPPING_THRESHOLD_CENTS: ${FREE_SHIPPING_THRESHOLD_CENTS:-10000}
+      CURRENCY: ${CURRENCY:-USD}
+    volumes:
+      - printique-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  printique-data:
